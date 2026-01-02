@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Year Countdown</title>
+
+<style>
+  :root {
+    --bg: #000;
+    --text: #fff;
+    --muted: #777;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    height: 100vh;
+    background: var(--bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text);
+  }
+
+  .wrapper {
+    text-align: center;
+  }
+
+  /* DAYS */
+  .days {
+    font-size: 32px;
+    letter-spacing: 4px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* CLOCK */
+  .clock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .time {
+    font-size: 160px;
+    font-weight: 600;
+    line-height: 1;
+    min-width: 2ch;
+    font-variant-numeric: tabular-nums;
+    transition: opacity 0.25s ease;
+  }
+
+  .time.fade {
+    opacity: 0;
+  }
+
+  .colon {
+    font-size: 140px;
+    font-weight: 300;
+    margin-top: -12px;
+    opacity: 0.8;
+  }
+
+  /* PRESENT TIME */
+  .now {
+    margin-top: 28px;
+    font-size: 18px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+  <div class="days" id="days">000 DAYS</div>
+
+  <div class="clock">
+    <div class="time" id="hours">00</div>
+    <div class="colon">:</div>
+    <div class="time" id="minutes">00</div>
+    <div class="colon">:</div>
+    <div class="time" id="seconds">00</div>
+  </div>
+
+  <!-- Present Time -->
+  <div class="now" id="now">00:00:00</div>
+</div>
+
+<script>
+function fadeUpdate(el, value) {
+  if (el.textContent === value) return;
+  el.classList.add("fade");
+  setTimeout(() => {
+    el.textContent = value;
+    el.classList.remove("fade");
+  }, 120);
+}
+
+function tick() {
+  const now = new Date();
+
+  /* Countdown */
+  const end = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+  let diff = end - now;
+  if (diff <= 0) return;
+
+  const days = Math.floor(diff / 86400000);
+  diff %= 86400000;
+
+  const hours = Math.floor(diff / 3600000);
+  diff %= 3600000;
+
+  const minutes = Math.floor(diff / 60000);
+  const seconds = Math.floor((diff / 1000) % 60);
+
+  fadeUpdate(document.getElementById("days"), days.toString().padStart(3, "0") + " DAYS");
+  fadeUpdate(document.getElementById("hours"), hours.toString().padStart(2, "0"));
+  fadeUpdate(document.getElementById("minutes"), minutes.toString().padStart(2, "0"));
+  fadeUpdate(document.getElementById("seconds"), seconds.toString().padStart(2, "0"));
+
+  /* Present Time */
+  const h = now.getHours().toString().padStart(2, "0");
+  const m = now.getMinutes().toString().padStart(2, "0");
+  const s = now.getSeconds().toString().padStart(2, "0");
+  document.getElementById("now").textContent = `${h}:${m}:${s}`;
+}
+
+tick();
+setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
